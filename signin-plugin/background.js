@@ -33,22 +33,28 @@ async function checkAndSignIn() {
 
 async function performSignIn() {
   try {
+    // 直接打开个人设置页面进行签到
+    const targetUrl = 'https://hk.ikuncode.cc/app/me';
+
     const [tab] = await chrome.tabs.query({
       url: 'https://hk.ikuncode.cc/*'
     });
 
     let targetTab;
     if (tab) {
+      // 如果已有标签页，导航到个人设置页面
+      await chrome.tabs.update(tab.id, { url: targetUrl });
       targetTab = tab;
-      await chrome.tabs.reload(tab.id);
     } else {
+      // 创建新标签页并打开个人设置页面
       targetTab = await chrome.tabs.create({
-        url: 'https://hk.ikuncode.cc',
+        url: targetUrl,
         active: false
       });
     }
 
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // 等待页面加载
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     const credentials = await chrome.storage.local.get(['username', 'password']);
 
@@ -62,9 +68,11 @@ async function performSignIn() {
         }
       });
 
+      // 等待登录完成
       await new Promise(resolve => setTimeout(resolve, 5000));
     }
 
+    // 执行签到
     await chrome.tabs.sendMessage(targetTab.id, {
       action: 'performSignIn'
     });

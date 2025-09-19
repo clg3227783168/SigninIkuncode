@@ -1,5 +1,5 @@
 # iKunCode自动签到插件
-
+🔐 Auto Login | ✅ Daily Check-in | 🔄 Smart Retry | 📱 Desktop | Notifications
 ## 功能特点
 
 ### 🔐 自动登录

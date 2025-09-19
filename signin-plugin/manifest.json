@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "iKunCode自动签到",
+  "version": "1.0",
+  "description": "自动签到iKunCode网站，支持失败重试",
+
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs",
+    "activeTab",
+    "notifications"
+  ],
+
+  "host_permissions": [
+    "https://hk.ikuncode.cc/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://hk.ikuncode.cc/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "iKunCode签到助手"
+  }
+}

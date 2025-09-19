@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 300px;
+      min-height: 200px;
+      padding: 16px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1a73e8;
+      margin: 0;
+    }
+
+    .status-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-left: 4px solid #1a73e8;
+    }
+
+    .status-label {
+      font-size: 12px;
+      color: #5f6368;
+      margin-bottom: 4px;
+    }
+
+    .status-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #202124;
+    }
+
+    .success {
+      border-left-color: #34a853;
+    }
+
+    .failed {
+      border-left-color: #ea4335;
+    }
+
+    .button {
+      width: 100%;
+      padding: 10px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .button:hover {
+      background: #1557b0;
+    }
+
+    .button:disabled {
+      background: #e8eaed;
+      color: #5f6368;
+      cursor: not-allowed;
+    }
+
+    .secondary-button {
+      background: #fff;
+      color: #1a73e8;
+      border: 1px solid #dadce0;
+    }
+
+    .secondary-button:hover {
+      background: #f8f9fa;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e8eaed;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: #5f6368;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 class="title">iKunCode签到助手</h1>
+  </div>
+
+  <div id="statusContainer">
+    <div class="status-card" id="lastSignInCard">
+      <div class="status-label">最后签到时间</div>
+      <div class="status-value" id="lastSignInTime">加载中...</div>
+    </div>
+
+    <div class="status-card" id="signInStatusCard">
+      <div class="status-label">签到状态</div>
+      <div class="status-value" id="signInStatus">加载中...</div>
+    </div>
+
+    <div class="status-card" id="messageCard" style="display: none;">
+      <div class="status-label">详细信息</div>
+      <div class="status-value" id="message"></div>
+    </div>
+  </div>
+
+  <div id="settingsContainer" style="display: none;">
+    <div class="status-card">
+      <div class="status-label">账户设置</div>
+      <input type="text" id="usernameInput" placeholder="用户名/邮箱" style="width: 100%; margin: 8px 0; padding: 8px; border: 1px solid #dadce0; border-radius: 4px;">
+      <input type="password" id="passwordInput" placeholder="密码" style="width: 100%; margin: 8px 0; padding: 8px; border: 1px solid #dadce0; border-radius: 4px;">
+      <div style="margin-top: 12px;">
+        <button class="button" id="saveCredentialsBtn">保存账户</button>
+        <button class="button secondary-button" id="clearCredentialsBtn">清除账户</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="button" id="signInNowBtn">立即签到</button>
+  <button class="button secondary-button" id="settingsBtn">账户设置</button>
+  <button class="button secondary-button" id="openSiteBtn">打开网站</button>
+
+  <div class="footer">
+    <div class="footer-text">自动签到插件 v1.0</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

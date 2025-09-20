@@ -203,6 +203,20 @@ async function performSignIn() {
   try {
     await waitForPageLoad();
 
+    // 检查是否遇到Cloudflare验证
+    if (isCloudflareChallenge()) {
+      console.log('🛡️ 检测到Cloudflare人机验证');
+      sendSignInResult(false, '需要完成人机验证，请手动访问网站完成验证后重试');
+
+      // 发送特殊消息通知后台需要用户干预
+      chrome.runtime.sendMessage({
+        action: 'cloudflareDetected',
+        message: '检测到Cloudflare验证，需要用户手动完成'
+      });
+
+      return;
+    }
+
     // 检查是否在个人设置页面
     if (window.location.href.includes('/app/me')) {
       console.log('✅ 已在个人设置页面，直接执行签到');
@@ -224,6 +238,54 @@ async function performSignIn() {
     console.error('签到过程出错:', error);
     sendSignInResult(false, '签到过程出错: ' + error.message);
   }
+}
+
+function isCloudflareChallenge() {
+  // 检测Cloudflare验证页面的特征
+  const cloudflareIndicators = [
+    // 页面标题包含Cloudflare
+    () => document.title.toLowerCase().includes('cloudflare'),
+
+    // 页面内容包含验证相关文字
+    () => document.body.textContent.includes('Checking your browser'),
+    () => document.body.textContent.includes('Please wait'),
+    () => document.body.textContent.includes('DDoS protection'),
+    () => document.body.textContent.includes('Security check'),
+
+    // 检查Cloudflare特有的元素
+    () => document.querySelector('.cf-browser-verification'),
+    () => document.querySelector('.cf-checking-browser'),
+    () => document.querySelector('#cf-wrapper'),
+    () => document.querySelector('[data-translate="checking_browser"]'),
+
+    // 检查页面是否显示验证码
+    () => document.querySelector('iframe[src*="challenges.cloudflare.com"]'),
+    () => document.querySelector('.cf-challenge-form'),
+
+    // 检查URL是否包含Cloudflare相关参数
+    () => window.location.href.includes('__cf_chl_jschl_tk__'),
+    () => window.location.href.includes('cf_chl_prog'),
+
+    // 检查是否有自动跳转的meta标签
+    () => {
+      const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
+      return metaRefresh && metaRefresh.content.includes('cloudflare');
+    }
+  ];
+
+  // 如果任何一个指标为真，则认为是Cloudflare验证页面
+  for (const indicator of cloudflareIndicators) {
+    try {
+      if (indicator()) {
+        console.log('🔍 检测到Cloudflare验证指标:', indicator.toString());
+        return true;
+      }
+    } catch (e) {
+      // 忽略检测错误，继续下一个
+    }
+  }
+
+  return false;
 }
 
 async function performSignInOnMePage() {

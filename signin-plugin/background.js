@@ -12,6 +12,9 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'retrySignIn') {
     console.log('重试签到');
     checkAndSignIn();
+  } else if (alarm.name === 'retryAfterCloudflare') {
+    console.log('Cloudflare验证后重试签到');
+    checkAndSignIn();
   }
 });
 
@@ -95,6 +98,25 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === 'manualSignIn') {
     console.log('收到手动签到请求');
     await performSignIn();
+    return;
+  }
+
+  if (message.action === 'cloudflareDetected') {
+    console.log('检测到Cloudflare验证:', message.message);
+
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+      title: 'iKunCode签到助手',
+      message: '⚠️ 需要完成人机验证\n请手动访问网站完成Cloudflare验证后，再次点击签到'
+    });
+
+    // 延迟重试 - 给用户时间完成验证
+    chrome.alarms.clear('retryAfterCloudflare');
+    chrome.alarms.create('retryAfterCloudflare', {
+      delayInMinutes: 5  // 5分钟后重试
+    });
+
     return;
   }
 
